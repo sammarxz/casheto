@@ -39,18 +39,18 @@ defmodule Casheto.Account do
     Enum.reduce(transactions, Decimal.new("0.00"), &calc_values(&1, &2))
   end
 
-  defp calculate_income([]), do: Decimal.new("0.00")
-  defp calculate_income(transactions) do
+  defp calculate_total(transactions, type) do
     transactions
-    |> Enum.filter(&(&1.type == :income))
+    |> Enum.filter(&(&1.type == type))
     |> Enum.reduce(Decimal.new("0.00"), &Decimal.add(&1.amount, &2))
   end
 
-  defp calculate_expenses([]), do: Decimal.new("0.00")
+  defp calculate_income(transactions) do
+    calculate_total(transactions, :income)
+  end
+
   defp calculate_expenses(transactions) do
-    transactions
-    |> Enum.filter(&(&1.type == :expense))
-    |> Enum.reduce(Decimal.new("0.00"), &Decimal.add(&1.amount, &2))
+    calculate_total(transactions, :expense)
   end
 
   defp calc_values(%Transaction{type: :income, amount: amount}, balance), do: Decimal.add(balance, amount)
