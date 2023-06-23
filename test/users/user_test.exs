@@ -1,22 +1,26 @@
 defmodule Casheto.Users.UserTest do
   use ExUnit.Case
 
-  test "build/2 creates a valid user" do
-    name = "John Doe"
-    email = "john@example.com"
+  alias Casheto.Users.User
 
-    {:ok, user} = Casheto.Users.User.build(name, email)
+  import Casheto.Factory
 
-    assert user.name == name
-    assert user.email == email
-  end
+  describe "build/2" do
+    test "should create a valid user" do
+      response = User.build(
+        "John Doe",
+        "john@example.com"
+      )
 
-  test "build/2 raises ArgumentError for invalid email" do
-    name = "John Doe"
-    email = "invalid_email"
+      expected_response = {:ok, build(:user)}
 
-    assert_raise ArgumentError, fn ->
-      Casheto.Users.User.build(name, email)
+      assert response == expected_response
+    end
+
+    test "should raise ArgumentError for invalid email" do
+      assert_raise ArgumentError, fn ->
+        User.build("John Doe", "invalid_email")
+      end
     end
   end
 end
