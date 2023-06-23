@@ -4,14 +4,20 @@ defmodule Casheto.Users.User do
 
   defstruct @keys
 
-  def build(name, email) when is_bitstring(name) and is_bitstring(email) do
+  def build(name, email)do
     {
       :ok,
       %__MODULE__{
         name: name,
-        email: email
+        email: validate_email(email)
       }
     }
   end
-  def build(_name, _email), do: {:error, "Invalid Parameters"}
+
+  defp validate_email(email) when is_binary(email) do
+    case Regex.match?(~r/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/, email) do
+      true -> email
+      false -> raise ArgumentError, "Invalid email address"
+    end
+  end
 end
